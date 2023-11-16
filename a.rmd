@@ -1,0 +1,139 @@
+```{r}
+# MR-MTRobin Docu
+# https://rdrr.io/github/kjgleason/Mr.MtRobin/man/MR_MtRobin_setup.html
+```
+
+
+```{r}
+# devtools::install_github("kjgleason/Mr.MtRobin")
+library("Mr.MtRobin")
+library(data.table)
+setwd("./FinalProject/")
+library(dplyr)
+library(tidyverse)
+library(glue)
+```
+
+```{r}
+# Data Sources:
+# GWAS SA
+# https://www.ebi.ac.uk/gwas/studies/GCST90093109
+# GWAS TAIWAN: for SNPs
+# https://www.ebi.ac.uk/gwas/studies/GCST90161239
+# GWAS CHINA BB:
+# https://www.ebi.ac.uk/gwas/studies/GCST90246053
+# LD Generation
+# https://mrcieu.github.io/TwoSampleMR/index.html
+# https://www.frontiersin.org/articles/10.3389/fgene.2020.00157/full
+```
+
+```{r}
+# EQTL
+names(eqtl_stats_example)
+# Human Ensembl/GENCODE gene accession numbers
+# combine dfs
+# need to rename variant -> variant_id
+# beta, se, pvalue -> beta_j, SE_j and pvalue_j
+
+```
+
+```{r}
+dt <- fread("QTD000090.all.tsv.gz")
+names(dt)
+dt[1,]
+
+dt <- dt %>% select(gene_id, variant, beta, se, pvalue)
+fwrite(dt, "90.csv.gz", compress="gzip", row.names=FALSE)
+```
+
+```{r}
+dt1 <- fread("QTD000085.all.tsv.gz")
+dt1 <- dt1 %>% select(gene_id, variant, beta, se, pvalue)
+fwrite(dt1, "85.csv.gz", compress="gzip", row.names=FALSE)
+```
+
+```{r}
+dt1 <- fread("85.csv.gz")
+dimnames(dt1) <- list(NULL, c("gene_id", "variant_id", "beta_1", "SE_1", "pvalue_1"))
+dt1 <- dt1 %>%
+    distinct(gene_id, variant_id, .keep_all = TRUE)
+
+dt2 <- fread("90.csv.gz")
+dimnames(dt2) <- list(NULL, c("gene_id", "variant_id", "beta_2", "SE_2", "pvalue_2"))
+dt2 <- dt2 %>%
+    distinct(gene_id, variant_id, .keep_all = TRUE)
+
+joint <- merge(dt1,dt2,by=c("gene_id","variant_id"))
+```
+
+```{r}
+joint <- fread("QTD000085.all.tsv.gz")
+dimnames(joint) <- list(NULL, c("gene_id", "variant_id", "beta_1", "SE_1", "pvalue_1"))
+joint <- joint %>%
+    distinct(gene_id, variant_id, .keep_all = TRUE)
+
+files <- c('QTD000090.all.tsv.gz',
+    'QTD000116.all.tsv.gz',
+    'QTD000121.all.tsv.gz',
+    'QTD000226.all.tsv.gz',
+    'QTD000231.all.tsv.gz',
+    'QTD000266.all.tsv.gz',
+    'QTD000276.all.tsv.gz',
+    'QTD000281.all.tsv.gz',
+    'QTD000296.all.tsv.gz',
+    'QTD000321.all.tsv.gz',
+    'QTD000331.all.tsv.gz',
+    'QTD000341.all.tsv.gz',
+    'QTD000534.all.tsv.gz',
+    'QTD000554.all.tsv.gz')
+
+for (i in seq_along(files)) {
+    dt <- fread(files[i])
+    dt <- dt %>% select(gene_id, variant, beta, se, pvalue)
+
+    dimnames(dt) <- list(NULL, c("gene_id", "variant_id", glue("beta_{i}"), glue("SE_{i}"), glue("pvalue_{i}")))
+    dt <- dt %>%
+        distinct(gene_id, variant_id, .keep_all = TRUE)
+
+    joint <- merge(joint,dt,by=c("gene_id","variant_id"))
+}
+```
+
+
+```{r}
+# GWAS
+df = fread("GWAS_SA.tsv.gz")
+df <- df %>% select(variant_id, beta, standard_error)
+
+
+df %>% select(variant_id, standard_error)
+```
+
+```{r}
+names(df)
+t(df[1:2,])
+df[df$variant_id == "rs144406489"]
+```
+
+
+```{r}
+MR_MtRobin_input <- MR_MtRobin_setup(geneID="gene1",snpID=IV_gene1,eqtl_data=eqtl_stats_example,gwas_data=gwas_stats_example,LD=LD_example,nTiss=10)
+
+names(eqtl_stats_example)
+names(gwas_stats_example)
+eqtl_stats_example[1,]
+gwas_stats_example[1,]
+
+
+MR_MtRobin_input
+```
+
+
+```{r}
+dt = fread("eQTL_joint.csv.gz")
+
+dt <- read_csv("eQTL_joint.csv.gz")
+
+data.table::setDTthreads(threads = 24)
+
+```
