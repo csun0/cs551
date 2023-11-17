@@ -4,9 +4,9 @@ library(dplyr)
 library(tidyverse)
 library(glue)
 
-joint <- fread("QTD000085.all.tsv.gz")
+joint <- fread("eQTL_data/QTD000085.all.tsv.gz")
 joint <- joint %>% select(gene_id, variant, beta, se, pvalue)
-dimnames(joint) <- list(NULL, c("gene_id", "variant_id", "beta_1", "SE_1", "pvalue_1"))
+dimnames(joint) <- list(NULL, c("gene_id", "variant_id", "beta_0", "SE_0", "pvalue_0"))
 joint <- joint %>%
     distinct(gene_id, variant_id, .keep_all = TRUE)
 
@@ -24,6 +24,7 @@ files <- c('QTD000090.all.tsv.gz',
     'QTD000341.all.tsv.gz',
     'QTD000534.all.tsv.gz',
     'QTD000554.all.tsv.gz')
+files <- paste("eQTL_data/", files, sep="")
 
 for (i in seq_along(files)) {
     dt <- fread(files[i])
@@ -36,4 +37,4 @@ for (i in seq_along(files)) {
     joint <- merge(joint,dt,by=c("gene_id","variant_id"))
 }
 
-fwrite(joint, "eQTL_joint.csv.gz", compress="gzip", row.names=FALSE)
+fwrite(joint, "eQTL_data/eQTL_joint.csv.gz", compress="gzip", row.names=FALSE)

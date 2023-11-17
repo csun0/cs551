@@ -8,7 +8,7 @@
 # devtools::install_github("kjgleason/Mr.MtRobin")
 library("Mr.MtRobin")
 library(data.table)
-setwd("./FinalProject/")
+setwd("./cs551/")
 library(dplyr)
 library(tidyverse)
 library(glue)
@@ -38,7 +38,7 @@ names(eqtl_stats_example)
 ```
 
 ```{r}
-dt <- fread("QTD000090.all.tsv.gz")
+dt <- fread("eQTL_data/QTD000085.all.tsv.gz")
 names(dt)
 dt[1,]
 
@@ -136,4 +136,10 @@ dt <- read_csv("eQTL_joint.csv.gz")
 
 data.table::setDTthreads(threads = 24)
 
+```
+
+```{r}
+a <- c("a", "b")
+a <- paste("SDAS", a, sep="")
+a
 ```
