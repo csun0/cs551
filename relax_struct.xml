@@ -1,0 +1,62 @@
+<ROSETTASCRIPTS>
+ 
+  <TASKOPERATIONS>
+         <LimitAromaChi2 name="arochi"/>
+         <ExtraRotamersGeneric name="ex1_ex2" ex1="1" ex2="1"/>
+   </TASKOPERATIONS>
+
+ 	<SCOREFXNS>
+    
+    <ScoreFunction name="s" weights="franklin2019"/>
+
+
+    </ScoreFunction>
+
+    <ScoreFunction name="cart" weights="franklin2019">
+         
+    </ScoreFunction>
+
+ 	</SCOREFXNS>
+ 
+
+ <FILTERS>
+
+ 	<ScoreType name="score_eval" scorefxn="s" threshold="5000"/>
+  <PackStat name="packstat" threshold="0.4" confidence="0" repeats="3" />
+  <ShapeComplementarity name="sc_jump1" jump="1" write_int_area="1" />
+
+  <InterfaceHoles name="intf_holes" jump="1" threshold="200"/>
+
+ </FILTERS>
+
+
+
+	<MOVERS>
+
+		<FastRelax name="fast_relax" scorefxn="cart" repeats="3" task_operations="arochi,ex1_ex2" />
+
+    <InterfaceAnalyzerMover name="interface-data" packstat="1" interface_sc="1" interface="A_B"/>
+   <InterfaceAnalyzerMover name="interface-data2" packstat="1" interface_sc="1" jump="1"/>
+
+
+	</MOVERS>
+ 
+	<PROTOCOLS>
+
+		<Add mover="add_memb"/>
+		<Add mover="init_pos"/>
+
+    <Add mover="fast_relax"/>
+    
+    <Add filter="sc_jump1"/>
+    <Add filter="packstat"/>
+    <!-- "initf_holes"  -->
+    <Add mover="interface-data"/>
+    <Add mover="interface-data2"/>
+
+
+	</PROTOCOLS>
+
+	<OUTPUT scorefxn="s"/>
+
+</ROSETTASCRIPTS>

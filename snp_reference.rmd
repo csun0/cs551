@@ -1,0 +1,21 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library("biomaRt")
+snp_mart <- useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+coding_mart <- useEnsembl("ensembl", "hsapiens_gene_ensembl")
+
+```
+
+```{r}
+snp_ids = c("rs13389219","rs10908278","rs13039863","rs7432739","rs62486442","rs10748694","rs2972144","rs2138157","rs1801282","rs2012444","rs11717195","rs2877716","rs6780171","rs10440833","rs7766070","rs3802177","rs35859536","rs10811661","rs11257655","rs12780155","rs1112718","rs2497306","rs7903146","rs234866","rs4810426","rs74790763","rs11925694","rs9350271","rs4731415","rs10811660","rs11187007","rs2237897","rs2301142","rs11257657","rs2283228","rs35261542","rs35859536","rs35978445")
+
+snp_attributes = c("refsnp_id", "ensembl_gene_name", "chr_name", "chrom_start", "chrom_end", "ensembl_peptide_allele", "snp", "pmcid", "translation_start", "translation_end", "allele")
+snp_locations = getBM(attributes = snp_attributes, filters="snp_filter", values=snp_ids, mart=snp_mart)
+snp_locations
+```
+

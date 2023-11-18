@@ -9,8 +9,8 @@
 library("Mr.MtRobin")
 library(data.table)
 setwd("./cs551/")
-library(dplyr)
-library(tidyverse)
+# library(dplyr)
+# library(tidyverse)
 library(glue)
 ```
 
@@ -102,10 +102,10 @@ for (i in seq_along(files)) {
 
 ```{r}
 # GWAS
-df = fread("GWAS_SA.tsv.gz")
+df = fread("GWAS_data/GWAS_SA.tsv.gz")
 df <- df %>% select(variant_id, beta, standard_error)
 
-
+print(names(df))
 df %>% select(variant_id, standard_error)
 ```
 
