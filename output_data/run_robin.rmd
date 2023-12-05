@@ -1,0 +1,42 @@
+```{r, message=False}
+library(glue)
+library(data.table)
+library(ldlinkR)
+library(stringr)
+library(lme4)
+library(mvnfast)
+setwd("/scratch/network/cs9095/cs551")
+source("walmart_robin.R")
+```
+
+
+```{r}
+goi <- c('ENSG00000053918',
+ 'ENSG00000082438',
+ 'ENSG00000119912',
+ 'ENSG00000132170',
+ 'ENSG00000138190',
+ 'ENSG00000145996',
+ 'ENSG00000148737',
+ 'ENSG00000151465',
+ 'ENSG00000164758',
+ 'ENSG00000168297',
+ 'ENSG00000168944',
+ 'ENSG00000173175',
+ 'ENSG00000176399',
+ 'ENSG00000197157',
+ 'ENSG00000213390')
+
+n_replicates <- 10000
+
+for (gene in goi) {
+    robin_df <- fread(glue("merged_data/{gene}_merge.tsv"))
+    names(robin_df) <- c("snp", "gwas_b", "gwas_se", "eqtl_b", "eqtl_se")
+    setorder(robin_df, cols="snp")
+    output <- walmart_robin(robin_df, n_replicates, ld)
+    out_pval <- append(out_pval, output)
+}
+
+output
+fwrite(list(output), "temp.op")
+```

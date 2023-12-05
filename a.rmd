@@ -40,10 +40,48 @@ names(eqtl_stats_example)
 ```{r}
 dt <- fread("eQTL_data/QTD000085.all.tsv.gz")
 names(dt)
-dt[1,]
+class(dt[1,"rsid"])
 
 dt <- dt %>% select(gene_id, variant, beta, se, pvalue)
 fwrite(dt, "90.csv.gz", compress="gzip", row.names=FALSE)
+
+dt[1,]
+
+dt[complete.cases(dt[, 'rsid'])]
+
+dt <- fread("/scratch/network/cs9095/cs551/eQTL_data/eQTL_joint_rsid.csv.gz")
+sli <- head(dt)
+
+
+sli
+
+
+goi <- c('ENSG00000053918',
+ 'ENSG00000082438',
+ 'ENSG00000119912',
+ 'ENSG00000132170',
+ 'ENSG00000138190',
+ 'ENSG00000145996',
+ 'ENSG00000148737',
+ 'ENSG00000151465',
+ 'ENSG00000164758',
+ 'ENSG00000168297',
+ 'ENSG00000168944',
+ 'ENSG00000173175',
+ 'ENSG00000176399',
+ 'ENSG00000197157',
+ 'ENSG00000213390')
+
+
+dt_goi <- dt[dt$gene_id %in% goi]
+dt_goi
+
+fwrite(dt_goi, "eQTL_data/eQTL_joint_goi.csv.gz", compress="gzip", row.names=FALSE)
+
+
+
+library(LDlinkR)
+LDmatrix()
 ```
 
 ```{r}
