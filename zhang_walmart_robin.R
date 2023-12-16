@@ -25,7 +25,7 @@ walmart_robin = function(robin_df, n_replicates, ld) {
   snp = robin_df$snp
   
   ld_len <- length(unique(snp))
-  LD <- diag(ncol=ld_len, nrow=ld_len)
+  # LD <- diag(ncol=ld_len, nrow=ld_len) test with diagonal covariance matrix
 
   # Model does not fit an intercept, either random or fixed
   me_fit = lmer(eqtl_b~-1+gwas_b+(gwas_b-1|snp), 
@@ -37,7 +37,7 @@ walmart_robin = function(robin_df, n_replicates, ld) {
   temp <- temp[!duplicated(temp)]
   gwas_se = temp$gwas_se
 
-  sigma_gwas = (gwas_se %*% t(gwas_se)) * LD
+  sigma_gwas = (gwas_se %*% t(gwas_se)) * ld
   null_gwas_b = rmvn(n=n_replicates, mu=rep(0, length(gwas_se)), 
                      sigma=sigma_gwas) # n_replicates x p (unique SNPs) matrix
   colnames(null_gwas_b) = unique(robin_df$snp)
